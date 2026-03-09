@@ -171,12 +171,13 @@
         // --- COMPONENTS ---
 
         // 0. WELCOME MODAL
-        const Modal = ({ children, onClose }) => (
+        const Modal = ({ children, onClose }) => ReactDOM.createPortal(
             <div className="fixed inset-0 z-[100] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
                 <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-8 relative overflow-hidden" onClick={e => e.stopPropagation()}>
                     {children}
                 </div>
-            </div>
+            </div>,
+            document.body
         );
 
         const RenameModal = ({ onRename, onCancel, currentTitle }) => {
@@ -237,7 +238,7 @@
             </Modal>
         );
 
-        const SharedIntroModal = ({ onClose }) => (
+        const SharedIntroModal = ({ onClose }) => ReactDOM.createPortal(
             <div className="fixed inset-0 z-[100] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
                 <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-8 relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-2 bg-brand-500"></div>
@@ -272,10 +273,11 @@
                         View Timeline
                     </button>
                 </div>
-            </div>
+            </div>,
+            document.body
         );
 
-        const WelcomeModal = ({ onClose }) => (
+        const WelcomeModal = ({ onClose }) => ReactDOM.createPortal(
             <div className="fixed inset-0 z-[100] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
                 <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-8 relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-2 bg-brand-500"></div>
@@ -308,7 +310,8 @@
                         Get Started <Icons.ArrowRight />
                     </button>
                 </div>
-            </div>
+            </div>,
+            document.body
         );
 
         // 1. HEADER
@@ -629,7 +632,7 @@
                                     };
         const EventModal = ({ event, onClose }) => {
             if (!event) return null;
-            return (
+            return ReactDOM.createPortal(
                 <div className="fixed inset-0 z-[100] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
                     <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-8 relative overflow-hidden" onClick={e => e.stopPropagation()}>
                         <button onClick={onClose} aria-label="Close" className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition">
@@ -640,7 +643,8 @@
                         <p className="text-sm text-slate-500 mb-4">{event.displayDate || event.date}</p>
                         <p className="text-slate-600 whitespace-pre-wrap">{event.description}</p>
                     </div>
-                </div>
+                </div>,
+                document.body
             );
         };
 
@@ -698,8 +702,8 @@
 
                         {/* Scrollable Timeline */}
                         <div className="flex-1 overflow-x-auto overflow-y-hidden flex flex-col">
-                            <div className="min-w-max flex flex-col p-8 pt-0">
-                                <div className="relative flex items-center py-80 px-16">
+                            <div className="min-w-max flex flex-col px-8 pt-0 h-full justify-center">
+                                <div className="relative flex items-center px-16">
                                     {/* Horizontal Line */}
                                     <div className="absolute left-0 right-0 top-1/2 h-1 bg-slate-200 z-0"></div>
 
@@ -713,21 +717,21 @@
                                                 onClick={() => setSelectedEvent(evt)}
                                                 onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setSelectedEvent(evt)}
                                                 aria-label={`View details for ${evt.title}`}
-                                                className={`w-full bg-white border border-slate-100 rounded-2xl p-5 shadow-sm hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer ${displayMode === 'compact' ? 'py-3' : ''} ${isTop ? 'mb-2' : 'mt-2'}`}
+                                                className={`w-full bg-white border border-slate-100 rounded-2xl p-5 shadow-sm hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer flex flex-col max-h-[calc(50vh-140px)] overflow-y-auto no-scrollbar ${displayMode === 'compact' ? 'py-3' : ''} ${isTop ? 'mb-2' : 'mt-2'}`}
                                             >
-                                                 <div className="flex items-baseline justify-between mb-2">
+                                                 <div className="flex items-baseline justify-between mb-2 shrink-0">
                                                     <span className={`font-black ${themeColor.text} text-xs uppercase tracking-widest`}>
                                                         {evt.displayDate || evt.date}
                                                     </span>
                                                  </div>
-                                                 <h3 className={`text-lg font-bold text-slate-800 mb-2 ${themeFont} leading-tight line-clamp-2`}>{evt.title}</h3>
+                                                 <h3 className={`text-lg font-bold text-slate-800 mb-2 ${themeFont} leading-tight line-clamp-2 shrink-0`}>{evt.title}</h3>
                                                  {displayMode === 'expanded' && evt.imageUrl && (
-                                                     <div className="mb-3 rounded-lg overflow-hidden bg-slate-50 border border-slate-100 aspect-video">
+                                                     <div className="mb-3 rounded-lg overflow-hidden bg-slate-50 border border-slate-100 aspect-video shrink-0">
                                                          <img src={evt.imageUrl} alt={evt.title} className="w-full h-full object-cover" loading="lazy" />
                                                      </div>
                                                  )}
                                                  {displayMode === 'expanded' && (
-                                                    <p className="text-slate-600 text-xs line-clamp-3">{evt.description}</p>
+                                                    <p className="text-slate-600 text-xs flex-1 overflow-y-auto">{evt.description}</p>
                                                  )}
                                             </div>
                                         );
@@ -1406,7 +1410,7 @@
                 setProjects(DataManager.getIndex());
             };
 
-            const ShareModal = ({ onCopy, onView }) => (
+            const ShareModal = ({ onCopy, onView }) => ReactDOM.createPortal(
                 <div className="fixed inset-0 z-[100] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
                     <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-8 relative overflow-hidden">
                         <div className="flex justify-center mb-6">
@@ -1425,7 +1429,8 @@
                             </button>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             );
 
             // If in dashboard, show minimal header
@@ -1566,6 +1571,7 @@
                             <Editor project={project} setProject={setProject} />
                         ) : (
                             <>
+                                {ReactDOM.createPortal(
                                 <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2">
                                     <div className="bg-white p-2 rounded-full shadow-lg border border-slate-200 flex flex-col gap-2">
                                         <button
@@ -1598,7 +1604,9 @@
                                             <Icons.List />
                                         </button>
                                     </div>
-                                </div>
+                                </div>,
+                                document.body
+                                )}
                                 {project && <TimelineView project={project} displayMode={displayMode} layoutMode={layoutMode} />}
                             </>
                         )}
